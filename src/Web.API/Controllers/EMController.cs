@@ -14,8 +14,9 @@ public class EMController : ControllerBase
         // demo本身就會成為擴展方法的第一個參數(message)
         // return Ok(demo.CombineWords());
 
-        SimpleLogger logger = new();  // 因為下方的程式碼, .NET編譯時已經知道logger已經具備LogError()
+        ISimpleLogger logger = new SimpleLogger();  // 因為下方的程式碼, .NET編譯時已經知道logger已經具備LogError()
         logger.LogError("This is an error");
+        // logger.Log("This is an error", "ERror");  // 不使用擴展方法, 但我的型態卻打錯字卻被帶到第三方套件
 
         return Ok();
     }
@@ -37,7 +38,7 @@ public static class ExtensionSimpleLogger
     // LogError是一個擴展方法
     // 它被掛到SimpleLogger實例上
     // 擴展方法被觸發時所帶進來的參數由message接收
-    public static void LogError(this SimpleLogger logger, string message)
+    public static void LogError(this ISimpleLogger logger, string message)
     {
         // 因為有logger, 所以可以觸發它真正的方法, 而非野橄欖的~
         // 這裡一律帶的type就是Error (由自己來標準化)
@@ -45,15 +46,18 @@ public static class ExtensionSimpleLogger
     }
 }
 // 第三方套件
-public class SimpleLogger
+public class SimpleLogger : ISimpleLogger
 {
     public void Log(string message)
     {
-        // do something
+        var defaultColor = Console.ForegroundColor;
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine(message);
+        Console.ForegroundColor = defaultColor;
     }
 
     public void Log(string message, string messageType)
     {
-        // do something
+        Log($"{messageType}, {message}");
     }
 }
