@@ -1,6 +1,9 @@
+﻿using Persistence;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+// AddPersistence()已經透過Extension Method掛到服務容器實例上了
+builder.Services.AddPersistence();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
